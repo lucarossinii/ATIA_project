@@ -9,7 +9,7 @@ function generaRicetta = genera_ricetta(ingredienti, creativita)
 
     % 1. Endpoint e chiave API
     url = "https://api.openai.com/v1/chat/completions";
-    apiKey = getenv("OPENAI_API_KEY");
+    apiKey = getenv("API_KEY");
     if apiKey == ""
         error("Chiave API mancante. Imposta la variabile d'ambiente OPENAI_API_KEY.");
     end
