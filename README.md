@@ -10,10 +10,8 @@
 ## Struttura del progetto
 
 ATIA_project/
-├── main.m             
-├── functions/
-│   ├── analisys.m        
-│   ├── acquisition.m           
-│   └── training.m 
+├── main.m
+├── ATIA.mlapp          # GUI
+├── genera_ricetta      # chiamata API
 
 ## Roadmap
