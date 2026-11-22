@@ -1,1 +1,13 @@
+# Configurazione locale con la chiave API: non va mai committata
 .env
+.env.*
+!.env.example
+
+# File temporanei e di autosalvataggio di MATLAB
+*.asv
+*.m~
+*.autosave
+
+# Cartelle generate da MATLAB Coder / Simulink
+codegen/
+slprj/

@@ -1,63 +1,28 @@
+% MAIN Punto di ingresso dell'applicazione ATIA.
+% Carica la configurazione dal file .env e avvia l'interfaccia grafica.
+% Tutta la logica (stream, scatti, analisi e ricetta) è gestita dai
+% callback della GUI in ATIA.mlapp.
 
 clc;
 clear;
 
-% Carica le variabili d'ambiente
-loadenv(".env");
+% Cartella del progetto (quella che contiene questo script): così il
+% programma funziona qualunque sia la cartella corrente di MATLAB
+cartellaProgetto = fileparts(mfilename("fullpath"));
+addpath(cartellaProgetto);
+
+% Carica le variabili d'ambiente (API_KEY, CAMERA_URL, ...)
+fileEnv = fullfile(cartellaProgetto, ".env");
+if ~isfile(fileEnv)
+    error("File .env non trovato in %s: crealo partendo da .env.example.", cartellaProgetto);
+end
+loadenv(fileEnv);
 
 % Avvia l'interfaccia grafica
 app = ATIA;
 
-% Verifica che l'applicazione sia valida
-if isempty(app) || ~isvalid(app)
-    warning("Impossibile avviare l'applicazione.");
-    return;
-end
-
-% Ciclo principale
-while isvalid(app)
-
-    try
-
-        if app.GeneraPremuto
-            
-            % Resetta la variabile che stabilisce se il tasto genera è
-            % stato premuto
-            app.GeneraPremuto = false;
-
-            
-            % Chiamata alla funzione che analizza le immagini per estrarre
-            % gli ingredienti
-            ingredienti = analizza_immagini(app.CapturedImages);
-
-
-            % Chiamata alla funzione che genera la ricetta
-            ricetta = genera_ricetta(ingredienti, 1);
-
-             % Scrive la ricetta nell'area di testo
-            if strlength(string(ricetta)) == 0
-                warning("Impossibile generare una ricetta.");
-            else
-                app.ricettaTextArea.Value = char(ricetta);
-            end
-
-            % Forza la scrittura immediata
-            drawnow;
-           
-        end
-
-        catch ME
-        warning(E.ME, "Errore durante l'aborazione:" +'%s', ME.message);
-        if isvalid(app)
-            app.ricettaTextArea.Value = "Errore: " + ME.message;
-        end
-
-    % Cede il controllo alla GUI per intercettare i clic sui pulsanti
-    drawnow;
-    pause(0.1);
-
-    end
-
-end
+% Attende la chiusura della finestra; nel frattempo MATLAB continua a
+% gestire i clic sui pulsanti
+waitfor(app.UIFigure);
 
 disp("Applicazione terminata.");
