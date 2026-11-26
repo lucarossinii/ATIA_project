@@ -69,13 +69,25 @@ function ricetta = genera_ricetta(ingredienti, creativita)
     payload.generationConfig = struct("temperature", creativita);
 
     % Invio della richiesta
-    try
-        risposta = webwrite(url, payload, options);
-    catch ME
-        error("genera_ricetta:richiestaFallita", ...
-            "Richiesta all'API Gemini fallita: %s", ME.message);
-    end
+    maxTentativi = 3;
+    attesaBase = 1.5; % secondi
 
+    for tentativo = 1:maxTentativi
+        try
+            risposta = webwrite(url, payload, options);
+            break; % richiesta riuscita, esci dal ciclo
+        catch ME
+            isUltimo = (tentativo == maxTentativi);
+            isTemporaneo = contains(ME.message, "503") || contains(ME.message, "Service Unavailable") || contains(ME.message, "429");
+
+            if isUltimo || ~isTemporaneo
+                error("genera_ricetta:richiestaFallita", ...
+                "Richiesta all'API Gemini fallita: %s", ME.message);
+            end
+
+            pause(attesaBase * tentativo);
+        end
+    end
     ricetta = estraiTesto(risposta);
 end
 
