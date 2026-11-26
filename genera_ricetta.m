@@ -35,7 +35,7 @@ function ricetta = genera_ricetta(ingredienti, creativita)
 
     modello = string(getenv("GEMINI_MODEL"));
     if strlength(modello) == 0
-        modello = "gemini-2.5-flash";
+        modello = "gemini-3.1-flash-lite";
     end
     url = "https://generativelanguage.googleapis.com/v1beta/models/" + modello + ":generateContent";
 
