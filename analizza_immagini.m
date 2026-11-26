@@ -39,7 +39,7 @@ function [ingredienti, punteggi] = analizza_immagini(immagini, sogliaPunteggio)
     % successive
     persistent net modello
     if isempty(net) || isempty(modello)
-        fileModello = fullfile(fileparts(mfilename("fullpath")), "modello_resnet50_56classi2.mat");
+        fileModello = fullfile(fileparts(mfilename("fullpath")), "modello_resnet50_56classi3.mat");
         modello = load(fileModello, "classifier", "featureLayer", "imagesize");
         verificaModello(modello.classifier);
         net = resnet50();
