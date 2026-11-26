@@ -21,6 +21,7 @@ ATIA_project/
 ├── ATIA.mlapp                        # GUI (App Designer): stream, scatti, analisi e ricetta
 ├── analizza_immagini.m               # classificazione degli ingredienti (ResNet-50 + ECOC)
 ├── genera_ricetta.m                  # chiamata all'API Google Gemini
+├── aumenta_dataset.m                 # data augmentation e bilanciamento del dataset di addestramento
 ├── modello_resnet50_56classi2.mat    # classificatore addestrato (classifier, featureLayer, imagesize)
 ├── .env.example                      # modello del file di configurazione
 └── .env                              # configurazione locale con la chiave API (da creare, non versionato)
@@ -69,6 +70,18 @@ oppure, dalla cartella del progetto, semplicemente `main`. Poi, nella finestra:
 3. **Genera ricetta** ferma lo stream, riconosce gli ingredienti nelle foto scattate e mostra la ricetta nell'area **Ricetta**, preceduta dall'elenco degli ingredienti riconosciuti.
 
 Dopo una ricetta, la foto successiva inizia una nuova serie. Se qualcosa va storto (fotocamera irraggiungibile, errore dell'API, nessun ingrediente riconosciuto), il messaggio compare nella finestra. In caso di errore le foto scattate restano salvate, quindi puoi riprovare.
+
+## Data augmentation del dataset
+
+`aumenta_dataset.m` crea una copia aumentata e bilanciata del dataset di addestramento (una sottocartella per classe), senza modificare l'originale:
+
+```matlab
+aumenta_dataset("dataset", "dataset_aumentato")                          % bilancia sulla classe più numerosa
+aumenta_dataset("dataset", "dataset_aumentato", ImmaginiPerClasse=300)   % porta ogni classe a 300 immagini
+aumenta_dataset("dataset", "dataset_aumentato", Moltiplicatore=3)        % triplica ogni classe
+```
+
+Le immagini generate applicano rotazioni, ribaltamenti, zoom, ritagli, variazioni di colore, rumore, sfocatura e compressione JPEG; `Intensita` ne regola l'ampiezza. Nella cartella di output vengono salvati anche `riepilogo_aumento.csv` (immagini per classe) e `anteprima_aumento.png` (esempi originali e aumentati). Lo script usa solo MATLAB base.
 
 ## Come viene calcolata la confidenza
 
